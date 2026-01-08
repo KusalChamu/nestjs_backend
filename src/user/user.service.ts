@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "./user.entity";
 import { Repository } from "typeorm"
 import { IUserResponse } from "./types/userResponse.interface";
+import { sign } from "jsonwebtoken";
 
 @Injectable()
 export class UserService {
@@ -16,11 +17,22 @@ export class UserService {
         return this.generateUserResponse(savedUser);
     }
 
+    generateToken(user:UserEntity):string{
+        return sign(
+            {
+                id:user.id,
+                username:user.username,
+                email:user.email,
+            },
+            process.env.JWT_SECRET,
+        )
+    }
+
     generateUserResponse(user:UserEntity):IUserResponse{
         return{
             user: {
-                ...user,
-                token:""
+                ...user,//spread operator(copies all data in the user to new object)
+                token:this.generateToken(user),
             }
         };
     }
