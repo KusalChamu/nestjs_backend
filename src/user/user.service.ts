@@ -5,6 +5,7 @@ import { UserEntity } from "./user.entity";
 import { Repository } from "typeorm";
 import { IUserResponse } from "./types/userResponse.interface";
 import { sign } from "jsonwebtoken";
+import { LoginDto } from "./dto/loginUser.dto";
 
 @Injectable()
 export class UserService {
@@ -41,6 +42,21 @@ export class UserService {
 
         return this.generateUserResponse(savedUser);
     }  
+
+    async loginUser(loginUserDto:LoginDto):Promise<UserEntity> {
+        const user =await this.userRepository.findOne({
+            where:{
+            email:loginUserDto.email}
+        })
+        if(!user){
+            throw new HttpException(
+                "wrong email or password",
+                HttpStatus.UNAUTHORIZED,
+
+            )
+        }
+        return user;
+    }
 
     generateToken(user: UserEntity): string {
         return sign(
