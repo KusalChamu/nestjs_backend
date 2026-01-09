@@ -66,6 +66,18 @@ export class UserService {
             delete user.password
         return user;
     }
+    async findById(id:string):Promise<UserEntity>{
+        const user = await this.userRepository.findOne({
+            where:{
+            },
+        });
+        if(!user) {
+            throw new HttpException(
+                "wrong email or password",
+                HttpStatus.UNAUTHORIZED,)
+        }
+        return user;
+    }
 
     generateToken(user: UserEntity): string {
         return sign(
@@ -79,6 +91,9 @@ export class UserService {
     }
 
     generateUserResponse(user: UserEntity): IUserResponse {
+        if(!user.id){
+            throw new HttpException("user data is missing",HttpStatus.BAD_REQUEST)
+        }
         return {
             user: {
                 ...user,
