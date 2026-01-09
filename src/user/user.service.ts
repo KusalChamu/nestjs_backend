@@ -6,6 +6,7 @@ import { Repository } from "typeorm";
 import { IUserResponse } from "./types/userResponse.interface";
 import { sign } from "jsonwebtoken";
 import { LoginDto } from "./dto/loginUser.dto";
+import { compare } from "bcrypt";
 
 @Injectable()
 export class UserService {
@@ -54,7 +55,15 @@ export class UserService {
                 HttpStatus.UNAUTHORIZED,
 
             )
-        }
+        };
+        const matchPassword = await compare(loginUserDto.password,user?.password);
+
+            if(!matchPassword){
+                throw new HttpException(
+                "wrong email or password",
+                HttpStatus.UNAUTHORIZED,)
+            };
+            delete user.password
         return user;
     }
 
