@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post, Req, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/createUser.dto";
 import { IUserResponse } from "./types/userResponse.interface";
 import { LoginDto } from "./dto/loginUser.dto";
 import type { AuthRequest } from "../types/expressRequest.interface";
 import { User } from "./decorators/user.decorator";
+import { AuthGuard } from "./guards/auth.guard";
 
 
 @Controller()
@@ -26,6 +27,7 @@ export class UserController {
     }
 
     @Get("user")
+    @UseGuards(AuthGuard)
     async getCurrentUser(
         @User() user,
     ): Promise<IUserResponse> {

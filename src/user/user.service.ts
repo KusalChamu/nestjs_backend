@@ -66,9 +66,9 @@ export class UserService {
             delete user.password
         return user;
     }
-    async findById(id:string):Promise<UserEntity>{
+    async findById(id:number):Promise<UserEntity>{
         const user = await this.userRepository.findOne({
-            where:{
+            where:{id
             },
         });
         if(!user) {
@@ -91,9 +91,7 @@ export class UserService {
     }
 
     generateUserResponse(user: UserEntity): IUserResponse {
-        if(!user.id){
-            throw new HttpException("user data is missing",HttpStatus.BAD_REQUEST)
-        }
+        
         return {
             user: {
                 ...user,
