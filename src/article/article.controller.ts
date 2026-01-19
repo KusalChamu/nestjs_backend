@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UserEntity } from "../user/user.entity";
 import { CreateArticleDto } from "./dto/createArticle.dto";
 import { User } from "../user/decorators/user.decorator";
@@ -17,4 +17,13 @@ export class ArticleController{
         const newArticle = await this.articleService.createArticle(userInfo,createArticleDto)
         return this.articleService.generateArticleResponse(newArticle)
     }
+
+    @Get(":slug")
+    async getArticle(@Param("slug")slug:string):Promise<IArticleResponse>{
+        const article = await this.articleService.getSingleArticle(slug);
+        return this.articleService.generateArticleResponse(article);
+    }
+
+
 }
+
